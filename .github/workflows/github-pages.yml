@@ -2,7 +2,7 @@
 # Set Pages source to "GitHub Actions" in the repo settings.
 #
 # RSVP / Neon still need a Node host (Lovable, Cloudflare, etc.).
-# This workflow only publishes the built static files so images load
+# This workflow publishes the static client build so invitation images load
 # at https://<user>.github.io/Joy_and_Sid_Wedding_Invitation/
 
 name: GitHub Pages
@@ -34,10 +34,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      # Nitro writes client assets to .output/public (there is no dist/client).
+      - name: Generate GitHub Pages index.html
+        run: node scripts/pages-index.mjs
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/client
+          path: .output/public
 
   deploy:
     needs: build
