@@ -1,0 +1,424 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system definition.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ * All colors MUST use oklch format.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+  --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-serif: "EB Garamond", Georgia, "Times New Roman", serif;
+  --font-script: "Pinyon Script", "Cormorant Garamond", cursive;
+  --font-sans: "EB Garamond", Georgia, serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-wax: var(--wax);
+  --color-olive: var(--olive);
+  --color-ivory: var(--ivory);
+}
+
+
+:root {
+  --radius: 0.25rem;
+  --background: oklch(0.918 0.017 84.5);
+  --foreground: oklch(0.32 0.026 70);
+  --card: oklch(0.957 0.012 84);
+  --card-foreground: oklch(0.32 0.026 70);
+  --popover: oklch(0.957 0.012 84);
+  --popover-foreground: oklch(0.32 0.026 70);
+  --primary: oklch(0.44 0.045 118);
+  --primary-foreground: oklch(0.965 0.014 84);
+  --secondary: oklch(0.9 0.019 82);
+  --secondary-foreground: oklch(0.34 0.03 70);
+  --muted: oklch(0.9 0.019 82);
+  --muted-foreground: oklch(0.5 0.026 74);
+  --accent: oklch(0.63 0.062 78);
+  --accent-foreground: oklch(0.965 0.014 84);
+  --destructive: oklch(0.51 0.14 28);
+  --destructive-foreground: oklch(0.965 0.014 84);
+  --border: oklch(0.83 0.024 82);
+  --input: oklch(0.83 0.024 82);
+  --ring: oklch(0.63 0.062 78);
+  --shadow-deck: 0 0 60px oklch(0.32 0.026 70 / 0.16);
+  --shadow-seal: 0 6px 18px oklch(0.32 0.026 70 / 0.22);
+  --shadow-glow: 0 0 0 1px oklch(0.63 0.062 78 / 0.6), 0 8px 26px oklch(0.44 0.045 118 / 0.28);
+  --chart-1: oklch(0.63 0.062 78);
+  --chart-2: oklch(0.44 0.045 118);
+  --chart-3: oklch(0.5 0.026 74);
+  --chart-4: oklch(0.72 0.05 80);
+  --chart-5: oklch(0.83 0.024 82);
+  --sidebar: oklch(0.957 0.012 84);
+  --sidebar-foreground: oklch(0.32 0.026 70);
+  --sidebar-primary: oklch(0.44 0.045 118);
+  --sidebar-primary-foreground: oklch(0.965 0.014 84);
+  --sidebar-accent: oklch(0.9 0.019 82);
+  --sidebar-accent-foreground: oklch(0.34 0.03 70);
+  --sidebar-border: oklch(0.83 0.024 82);
+  --sidebar-ring: oklch(0.63 0.062 78);
+
+  /* Envelope / invitation palette */
+  --paper: oklch(0.9436 0.0159 73.7);
+  --paper-deep: oklch(0.9285 0.0199 77.3);
+  /* warm ivory base (#F7F0E3) shared by every section gap */
+  --ivory: oklch(0.9485 0.0166 89.5);
+  --wax: oklch(0.5224 0.0763 57.2);
+  --gold: oklch(0.7675 0.0573 75.7);
+  --gold-deep: oklch(0.6395 0.0669 73.3);
+  --olive: oklch(0.4498 0.0432 113.12);
+
+  --gradient-foil: linear-gradient(
+    135deg,
+    oklch(0.8732 0.0453 88.6) 0%,
+    oklch(0.7443 0.0592 82) 28%,
+    oklch(0.8264 0.0508 86) 46%,
+    oklch(0.6252 0.0662 78) 72%,
+    oklch(0.5124 0.058 76) 100%
+  );
+
+  --ease-paper: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-flap: cubic-bezier(0.5, 0.02, 0.16, 1.03);
+  --ease-draw: cubic-bezier(0.22, 0.85, 0.2, 1.06);
+
+  /* Storytelling atmosphere: dusk ivory -> golden hour -> olive garden -> night */
+  --story-open: radial-gradient(
+    circle at 50% 42%,
+    oklch(0.9 0.028 82) 0%,
+    oklch(0.78 0.036 72) 58%,
+    oklch(0.58 0.038 66) 100%
+  );
+  --story-1: oklch(0.9436 0.0159 73.7);
+  --story-2: oklch(0.9224 0.0272 82);
+  --story-3: oklch(0.8944 0.0407 76);
+  --story-4: oklch(0.8792 0.0392 96);
+  --story-5: oklch(0.8544 0.0402 118);
+  --story-6: oklch(0.8712 0.0338 104);
+  --story-7: oklch(0.8896 0.0364 68);
+  --story-8: oklch(0.8512 0.0448 60);
+  --story-9: oklch(0.6584 0.0508 62);
+}
+
+
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* reserve the scrollbar track so the page never jumps sideways when the
+       deck unlocks scrolling after the envelope opens */
+    scrollbar-gutter: stable;
+  }
+
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-serif);
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  .story-scroll {
+    display: flex;
+    flex-direction: column;
+    /* breathing space between pages — the ivory paper background shows through */
+    gap: 0.5cm;
+    line-height: 0;
+    font-size: 0;
+    isolation: isolate;
+    overflow: clip;
+  }
+
+  /* Phones / tall screens: each page spans the full width and the section is
+     exactly as tall as the artwork. No letterbox bands, so consecutive pages
+     butt together as one continuous printed sheet. */
+  .story-section {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    contain: paint;
+  }
+
+  .story-page-shell {
+    width: 100%;
+    height: auto;
+  }
+
+  .story-page-frame {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin-inline: auto;
+  }
+
+  .story-page {
+    display: block;
+    position: relative;
+    z-index: 0;
+    width: 100%;
+    height: auto;
+    /* half-pixel overlap kills sub-pixel hairlines between stacked pages */
+    margin-bottom: -1px;
+    backface-visibility: hidden;
+  }
+
+  /* blurred extension of the same artwork — only needed when the page cannot
+     span the full width (wide screens), where side bands would appear */
+  .story-bleed {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(48px) saturate(1.05);
+    transform: scale(1.15);
+    opacity: 0.9;
+    pointer-events: none;
+    display: none;
+  }
+
+  /* Wider screens: a full-width page would be taller than the viewport, so cap
+     it to the screen height and let the blurred bleed fill the side bands. */
+  @media (min-aspect-ratio: 1080/1920) {
+    .story-section {
+      display: grid;
+      place-items: center;
+      min-height: 100svh;
+    }
+
+    .story-page-shell {
+      height: 100svh;
+    }
+
+    .story-page-frame {
+      width: auto;
+      height: 100%;
+    }
+
+    .story-page {
+      width: auto;
+      max-width: 100%;
+      height: 100%;
+      object-fit: contain;
+      margin-bottom: 0;
+    }
+
+    .story-bleed {
+      display: block;
+    }
+  }
+
+  /* The paper must never dim relative to its neighbour — any opacity gap reads
+     as a visible seam between pages. Reveal is handled by a whisper-soft lift. */
+  .page-reveal {
+    opacity: 0.985;
+    transition: opacity 480ms var(--ease-silk);
+  }
+
+  .page-reveal.is-visible {
+    opacity: 1;
+  }
+
+  /* Mobile artwork already reaches edge-to-edge. Keep every pixel unobstructed
+     instead of floating page controls over the invitation details. */
+  @media (max-width: 639px) {
+    .story-page-rail,
+    .story-scroll-hint,
+    .story-floating-rsvp {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-reveal,
+    .page-reveal.is-visible {
+      opacity: 1;
+      transition: none;
+    }
+  }
+
+
+
+  .foil-text {
+    background: var(--gradient-foil);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .label-caps {
+    font-family: var(--font-serif);
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+  }
+
+  .seal-hotspot {
+    animation: seal-pulse 3.2s ease-in-out infinite;
+  }
+
+  .seal-hotspot[data-opened="true"] {
+    animation: none;
+    opacity: 0;
+  }
+
+  .seal-hotspot:hover {
+    animation-play-state: paused;
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+@keyframes seal-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.63 0.062 78 / 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 14px oklch(0.63 0.062 78 / 0);
+  }
+}
+
+@keyframes sealPulse {
+  0% {
+    box-shadow: 0 0 0 0 oklch(0.52 0.0763 57 / 40%);
+  }
+  70% {
+    box-shadow: 0 0 0 26px oklch(0.52 0.0763 57 / 0%);
+  }
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.52 0.0763 57 / 0%);
+  }
+}
+
+@keyframes sealBreathe {
+  0%,
+  100% {
+    transform: scale(1) rotate(-1.5deg);
+  }
+  50% {
+    transform: scale(1.035) rotate(1.5deg);
+  }
+}
+
+@keyframes hintFade {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes deckRise {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.deck-enter {
+  /* opacity only — a transform here would turn the fixed background layers
+     into absolutely positioned ones and visibly shift the first page */
+  animation: deckRise 1.2s var(--ease-silk) both;
+}
+
+
+.envelope-responsive {
+  --envelope-flap-clip: polygon(0% 0%, 100% 0%, 100% 39%, 50% 74.5%, 0% 39%);
+  --envelope-body-clip: polygon(0% 38%, 50% 73.5%, 100% 38%, 100% 100%, 0% 100%);
+  --envelope-letter-top: 30%;
+  --envelope-seal-top: 74%;
+  --envelope-seal-left: 50%;
+  --envelope-seal-size: 36%;
+  --envelope-hint-top: 85%;
+}
+
+@media (orientation: landscape) {
+  .envelope-responsive {
+    --envelope-flap-clip: polygon(0% 0%, 100% 0%, 100% 5%, 50% 74%, 0% 5%);
+    --envelope-body-clip: polygon(0% 4%, 50% 73%, 100% 4%, 100% 100%, 0% 100%);
+    --envelope-letter-top: 14%;
+    --envelope-seal-top: 73.7%;
+    --envelope-seal-left: 50%;
+    --envelope-seal-size: clamp(10.5rem, 18vw, 15.2rem);
+    --envelope-hint-top: 88%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .seal-hotspot,
+  .deck-enter {
+    animation: none;
+  }
+}
