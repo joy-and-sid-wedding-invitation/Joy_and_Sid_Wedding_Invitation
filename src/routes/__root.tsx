@@ -10,9 +10,32 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import waxSealAsset from "@/assets/wax-seal.webp";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 
+/**
+ * Resolve a Vite asset URL for both local (`/`) and GitHub Pages
+ * (`/Joy_and_Sid_Wedding_Invitation/`) by respecting import.meta.env.BASE_URL.
+ */
+function resolvePublicUrl(asset: string | { src: string }): string {
+  const raw = typeof asset === "string" ? asset : asset.src;
+  if (/^https?:\/\//i.test(raw) || raw.startsWith("//")) return raw;
+
+  const base = import.meta.env.BASE_URL || "/";
+  if (raw.startsWith(base)) return raw;
+
+  // Absolute site path missing the project base (common on GH Pages).
+  if (raw.startsWith("/")) {
+    return `${base.replace(/\/$/, "")}${raw}`;
+  }
+
+  return `${base}${raw.replace(/^\//, "")}`;
+}
+
+/** Stable public copy + hashed asset — either works under the Vite base path. */
+const faviconHref = resolvePublicUrl("favicon.webp");
+const faviconAssetHref = resolvePublicUrl(waxSealAsset);
 
 function NotFoundComponent() {
   return (
@@ -99,7 +122,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      // Prefer the hashed asset; public/favicon.webp is the GH Pages–stable fallback.
+      { rel: "icon", href: faviconAssetHref, type: "image/webp" },
+      { rel: "icon", href: faviconHref, type: "image/webp" },
+      { rel: "apple-touch-icon", href: faviconAssetHref },
     ],
 
   }),
@@ -108,6 +134,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
+
+function useDynamicFavicon() {
+  useEffect(() => {
+    const href = faviconAssetHref || faviconHref;
+    const upsert = (rel: string) => {
+      let link = document.querySelector<HTMLLinkElement>(`link[rel='${rel}']`);
+      if (!link) {
+        link = document.createElement("link");
+        link.rel = rel;
+        document.head.appendChild(link);
+      }
+      link.type = "image/webp";
+      link.href = href;
+    };
+    upsert("icon");
+    upsert("apple-touch-icon");
+  }, []);
+}
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
@@ -125,6 +169,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useDynamicFavicon();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -134,4 +179,3 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
-

@@ -63,6 +63,10 @@ if (!existsSync(assetsDir)) {
 const files = readdirSync(assetsDir);
 const indexJs = files.find((f) => /^index-.*\.js$/.test(f));
 const stylesCss = files.find((f) => /^styles-.*\.css$/.test(f));
+const sealWebp = files.find((f) => /^wax-seal-.*\.webp$/.test(f));
+const publicFavicon = existsSync(join(publicDir, "favicon.webp"))
+  ? `${publicBase()}favicon.webp`
+  : null;
 
 if (!indexJs || !stylesCss) {
   console.error("No SPA shell and could not find hashed assets.", { indexJs, stylesCss });
@@ -70,6 +74,9 @@ if (!indexJs || !stylesCss) {
 }
 
 const base = publicBase();
+const iconHref =
+  publicFavicon ||
+  (sealWebp ? `${base}assets/${sealWebp}` : `${base}favicon.ico`);
 const html = `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -77,7 +84,8 @@ const html = `<!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Joy &amp; Sid — Wedding Invitation</title>
     <base href="${base}" />
-    <link rel="icon" href="${base}favicon.ico" />
+    <link rel="icon" href="${iconHref}" type="image/webp" />
+    <link rel="apple-touch-icon" href="${iconHref}" />
     <link rel="stylesheet" crossorigin href="${base}assets/${stylesCss}" />
   </head>
   <body>
