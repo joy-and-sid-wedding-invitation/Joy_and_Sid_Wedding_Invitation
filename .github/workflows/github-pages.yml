@@ -1,9 +1,13 @@
 # Deploy the production client assets to GitHub Pages.
-# Set Pages source to "GitHub Actions" in the repo settings.
+#
+# ONE-TIME SETUP (required or deploy-pages returns 404):
+#   1. Open https://github.com/teresa-at-49/Joy_and_Sid_Wedding_Invitation/settings/pages
+#   2. Under "Build and deployment" → Source → choose "GitHub Actions"
+#   3. Save, then re-run this workflow (Actions → GitHub Pages → Re-run jobs)
 #
 # RSVP / Neon still need a Node host (Lovable, Cloudflare, etc.).
-# This workflow publishes the static client build so invitation images load
-# at https://<user>.github.io/Joy_and_Sid_Wedding_Invitation/
+# This workflow only publishes static files so invitation images load at
+# https://teresa-at-49.github.io/Joy_and_Sid_Wedding_Invitation/
 
 name: GitHub Pages
 
