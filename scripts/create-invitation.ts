@@ -2,7 +2,10 @@
  * Minimal invitation creation script (no UI, no admin dashboard).
  *
  * Usage:
- *   DATABASE_URL="postgresql://..." bun scripts/create-invitation.ts "Guest Name" [--base https://your-site.com]
+ *   npx tsx --env-file=.env scripts/create-invitation.ts "Guest Name"
+ *   npx tsx --env-file=.env scripts/create-invitation.ts "Guest Name" --base http://localhost:8080
+ *
+ * Default base is SITE_URL from .env, then the GitHub Pages production URL.
  *
  * Token generation: 24 random bytes from crypto.randomBytes (CSPRNG),
  * encoded base64url -> 32 URL-safe characters, ~192 bits of entropy.
@@ -10,19 +13,37 @@
 import { randomBytes } from "node:crypto";
 import { neon } from "@neondatabase/serverless";
 
+const PRODUCTION_SITE =
+  "https://joy-and-sid-wedding-invitation.github.io/Joy_and_Sid_Wedding_Invitation";
+
 function generateToken(): string {
   return randomBytes(24).toString("base64url"); // 32 chars, 192 bits
+}
+
+function normalizeBase(url: string): string {
+  return url.trim().replace(/\/+$/, "");
 }
 
 async function main() {
   const args = process.argv.slice(2);
   const baseIndex = args.indexOf("--base");
-  const base =
-    baseIndex >= 0 ? args[baseIndex + 1] : "https://project-creation-space.lovable.app";
-  const guestName = args.filter((_, i) => i !== baseIndex && i !== baseIndex + 1).join(" ").trim();
+  const baseFromFlag =
+    baseIndex >= 0 && args[baseIndex + 1] ? args[baseIndex + 1] : undefined;
+  const base = normalizeBase(
+    baseFromFlag ||
+      process.env["SITE_URL"] ||
+      process.env["INVITE_BASE_URL"] ||
+      PRODUCTION_SITE,
+  );
+  const guestName = args
+    .filter((_, i) => baseIndex < 0 || (i !== baseIndex && i !== baseIndex + 1))
+    .join(" ")
+    .trim();
 
   if (!guestName) {
-    console.error('Usage: bun scripts/create-invitation.ts "Guest Name" [--base https://site]');
+    console.error(
+      'Usage: npx tsx --env-file=.env scripts/create-invitation.ts "Guest Name" [--base https://site]',
+    );
     process.exit(1);
   }
 
