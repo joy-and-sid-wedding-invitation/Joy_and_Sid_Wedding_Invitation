@@ -6,7 +6,7 @@
 #   3. Save, then re-run this workflow (Actions → GitHub Pages → Re-run jobs)
 #
 # RSVP / Neon still need a Node host (Lovable, Cloudflare, etc.).
-# This workflow only publishes static files so invitation images load at
+# This workflow publishes a SPA shell + static assets at
 # https://teresa-at-49.github.io/Joy_and_Sid_Wedding_Invitation/
 
 name: GitHub Pages
@@ -37,14 +37,15 @@ jobs:
           node-version: "22"
           cache: npm
       - run: npm ci
+      # SPA mode (vite.config when GITHUB_PAGES=true) writes a hydrateable
+      # index.html under dist/client — not .output/public (Nitro is off).
       - run: npm run build
-      # Nitro writes client assets to .output/public (there is no dist/client).
-      - name: Generate GitHub Pages index.html
+      - name: Ensure 404.html for client-side routes
         run: node scripts/pages-index.mjs
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .output/public
+          path: dist/client
 
   deploy:
     needs: build

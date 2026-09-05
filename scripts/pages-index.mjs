@@ -1,33 +1,11 @@
 /**
- * TanStack Start + Nitro emit hashed assets under .output/public/assets
- * but no index.html (SSR is handled by the worker). GitHub Pages needs a
- * static entry — write index.html + 404.html that load the client bundle.
+ * After a GitHub Pages SPA build, ensure 404.html exists for client routes.
+ * Prefers dist/client (SPA / nitro:false) over leftover .output/public.
  *
  * Usage: node scripts/pages-index.mjs
- * Expects GITHUB_REPOSITORY (owner/name) or VITE_BASE_PATH for the base href.
  */
-import { readdirSync, writeFileSync, existsSync } from "node:fs";
+import { copyFileSync, existsSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-
-const publicDir = join(process.cwd(), ".output", "public");
-const assetsDir = join(publicDir, "assets");
-
-if (!existsSync(assetsDir)) {
-  console.error("Missing .output/public/assets — run npm run build first.");
-  process.exit(1);
-}
-
-const files = readdirSync(assetsDir);
-const indexJs = files.find((f) => /^index-.*\.js$/.test(f));
-const stylesCss = files.find((f) => /^styles-.*\.css$/.test(f));
-
-if (!indexJs || !stylesCss) {
-  console.error("Could not find index-*.js or styles-*.css in assets.", {
-    indexJs,
-    stylesCss,
-  });
-  process.exit(1);
-}
 
 function publicBase() {
   const fromEnv = process.env["VITE_BASE_PATH"];
@@ -39,6 +17,58 @@ function publicBase() {
   return "/";
 }
 
+function pickPublicDir() {
+  const ranked = [
+    join(process.cwd(), "dist", "client"),
+    join(process.cwd(), ".output", "public"),
+    join(process.cwd(), "dist"),
+  ];
+  // Prefer a directory that already has a TanStack SPA shell (contains $_TSR).
+  for (const dir of ranked) {
+    const indexPath = join(dir, "index.html");
+    if (existsSync(indexPath)) return dir;
+  }
+  return ranked.find((dir) => existsSync(dir));
+}
+
+const publicDir = pickPublicDir();
+if (!publicDir) {
+  console.error("No static output directory found (dist/client or .output/public).");
+  process.exit(1);
+}
+
+const indexPath = join(publicDir, "index.html");
+const shellPath = join(publicDir, "_shell.html");
+const fourOhFourPath = join(publicDir, "404.html");
+
+if (existsSync(indexPath)) {
+  copyFileSync(indexPath, fourOhFourPath);
+  console.log(`Using SPA shell in ${publicDir}; wrote 404.html`);
+  process.exit(0);
+}
+
+if (existsSync(shellPath)) {
+  copyFileSync(shellPath, indexPath);
+  copyFileSync(shellPath, fourOhFourPath);
+  console.log(`Copied _shell.html → index.html + 404.html in ${publicDir}`);
+  process.exit(0);
+}
+
+const assetsDir = join(publicDir, "assets");
+if (!existsSync(assetsDir)) {
+  console.error(`Missing assets in ${publicDir}`);
+  process.exit(1);
+}
+
+const files = readdirSync(assetsDir);
+const indexJs = files.find((f) => /^index-.*\.js$/.test(f));
+const stylesCss = files.find((f) => /^styles-.*\.css$/.test(f));
+
+if (!indexJs || !stylesCss) {
+  console.error("No SPA shell and could not find hashed assets.", { indexJs, stylesCss });
+  process.exit(1);
+}
+
 const base = publicBase();
 const html = `<!DOCTYPE html>
 <html lang="en">
@@ -46,21 +76,16 @@ const html = `<!DOCTYPE html>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Joy &amp; Sid — Wedding Invitation</title>
-    <meta
-      name="description"
-      content="The wedding invitation of Joy &amp; Sid. Chiang Mai, 9 January 2027."
-    />
     <base href="${base}" />
     <link rel="icon" href="${base}favicon.ico" />
     <link rel="stylesheet" crossorigin href="${base}assets/${stylesCss}" />
   </head>
   <body>
-    <div id="root"></div>
     <script type="module" crossorigin src="${base}assets/${indexJs}"></script>
   </body>
 </html>
 `;
 
-writeFileSync(join(publicDir, "index.html"), html);
-writeFileSync(join(publicDir, "404.html"), html);
-console.log(`Wrote index.html + 404.html (base=${base}, js=${indexJs}, css=${stylesCss})`);
+writeFileSync(indexPath, html);
+writeFileSync(fourOhFourPath, html);
+console.log(`Wrote fallback index.html + 404.html in ${publicDir} (base=${base})`);
